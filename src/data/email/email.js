@@ -43,6 +43,7 @@ export const  inboxData = [{
     sendDate: "02",
     sendMonth: "Jun",
     sendYear: "2016",
-    msg: "Mattis luctus. Donec nisi diam,"
+    msg: "Mattis luctus. Donec nisi diam."
+
 }
 ]
