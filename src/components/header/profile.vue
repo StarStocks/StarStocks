@@ -7,19 +7,19 @@
         alt=""
       />
       <div class="media-body">
-        <span>Luke Rodgers</span>
+        <span>{Username}</span>
         <p class="mb-0 font-roboto">
-          Admin <i class="middle fa fa-angle-down"></i>
+          {Role} <i class="middle fa fa-angle-down"></i>
         </p>
       </div>
     </div>
     <ul class="profile-dropdown onhover-show-div">
-      <li>
+<!--       <li>
         <router-link :to="'/users/profile'"><vue-feather type="user"></vue-feather><span>Profile</span></router-link>
       </li>
       <li>
         <router-link :to="'/pages/search'"><vue-feather type="settings"></vue-feather><span>Settings</span></router-link>
-      </li>
+      </li> -->
       <li>
         <a @click="logout"
           ><vue-feather type="log-in"></vue-feather><span>Log out</span></a

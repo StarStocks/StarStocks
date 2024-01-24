@@ -12,21 +12,21 @@
             <div class="d-flex h-100">
               <img src="@/assets/images/giftools.gif" alt="gif">
               <h6 class="mb-0 f-w-400">
-                <span class="font-primary"></span><span class="f-light">Thank you Alpha Testers!</span></h6><i class="icon-arrow-top-right f-light"></i>
+                <span class="font-primary"></span><span class="f-light">Thank you Testers!</span></h6><i class="icon-arrow-top-right f-light"></i>
             </div>
           </swiper-slide>
-          <swiper-slide class="h-100">
+<!--           <swiper-slide class="h-100">
             <div class="d-flex h-100">
               <img src="@/assets/images/giftools.gif" alt="gif">
               <h6 class="mb-0 f-w-400">
                 <span class="f-light">Who's ya' bae?? </span></h6><a class="ms-1" href="/pages/support" target="_blank">Add a new celeb now !</a>
             </div>
-          </swiper-slide>
+          </swiper-slide> -->
         </swiper>
     </div>
     <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
       <ul class="nav-menus">
-        <li>
+        <!-- <li>
           <span class="header-search"
             ><svg @click="search_open()">
               <use href="@/assets/svg/icon-sprite.svg#search" ></use>
@@ -38,11 +38,11 @@
             <use href="@/assets/svg/icon-sprite.svg#star" ></use>
           </svg>
           <Bookmark v-bind:activeclass="bookmark" />
-        </li>
+        </li> -->
         <li>
           <Mode />
         </li>
-        <Notifications />
+<!--         <Notifications /> -->
         <Profile />
       </ul>
     </div>

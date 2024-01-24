@@ -13,14 +13,14 @@ export var menuItems={
       "type": "link",
       "active": false
     },
-    {
+/*     {
       "path": "/app/portfolio",
       "title": "Portfolio",
       "icon": "stroke-job-search",
       "iconf":"fill-job-search",
       "type": "link",
       "active": false
-    },
+    }, */
     {
       "path": "/app/market",
       "title": "Market",
@@ -31,7 +31,7 @@ export var menuItems={
       "badgeValue": "5",
       "active": false
     },
-    {
+/*     {
       "path": "/app/bookmark",
       "title": "Bookmarks",
       "icon": "stroke-bookmark",
@@ -131,6 +131,6 @@ export var menuItems={
       "iconf":"fill-support-tickets",
       "type": "link",
       "active":false
-    }
+    } */
   ]
 }

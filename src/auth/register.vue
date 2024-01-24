@@ -24,7 +24,6 @@
 
                 <form class="theme-form" @submit.prevent="registerUser">
                   <h4>Create your account</h4>
-                  <p>Enter your details to create account</p>
 
                   <div class="form-group">
                     <label class="col-form-label pt-0">Username</label>
@@ -66,7 +65,7 @@
                       class="form-control"
                       type="email"
                       required
-                      placeholder="Test@gmail.com"
+                      placeholder="example@gmail.com"
                       v-model="email"
                     />
                   </div>
@@ -80,25 +79,21 @@
                         placeholder="*********"
                         v-model="password"
                       />
-                      <div class="show-hide"><span :class="active ? 'show' : 'hide'" @click.prevent="show"> </span></div>
+                      <!-- <div class="show-hide"><span :class="active ? 'show' : 'hide'" @click.prevent="show"> </span></div> -->
                     </div>
                   </div>
                   <div class="form-group mb-0">
-                    <div class="checkbox p-0">
+<!--                     <div class="checkbox p-0">
                       <input id="checkbox1" type="checkbox" />
-                      <label class="text-muted" for="checkbox1"
-                        >Agree with<a class="ms-2" href="#"
-                          >Privacy Policy</a
-                        ></label
-                      >
-                    </div>
+                      <label class="text-muted" for="checkbox1">Agree with<a class="ms-2" href="#">Privacy Policy</a></label>
+                    </div> -->
                     <button class="btn btn-primary btn-block" >
                       Create Account
                     </button>
                   </div>
-                  <h6 class="text-muted mt-4 or">Or signup with</h6>
+<!--                   <h6 class="text-muted mt-4 or">Or signup with</h6>
                     <div class="btn"><a class="btn btn-light" href="#" > Google </a>
-                  </div>
+                  </div> -->
                   <p class="mt-4 mb-0">
                     Already have an account?
                     <router-link class="ms-2" to="/auth/login">
