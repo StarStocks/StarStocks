@@ -7,14 +7,13 @@ class Celeb {
     this.celebsRef = collection(this.db, 'celebs');
   }
 
-  async addCeleb({ firstName, lastName, username, imgURL, desc, category, subcategory, team, mentions, issuePrice, currentPrice }) {
+  async addCeleb({ firstName, lastName, username, imgURL, category, subcategory, team, mentions, issuePrice, currentPrice }) {
     const celebId = doc(this.celebsRef).id; // Generate unique ID
     const celebData = {
       firstName, 
       lastName, 
       username, 
       imgURL, 
-      desc, 
       category, 
       subcategory, 
       team, 

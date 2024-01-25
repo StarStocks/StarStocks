@@ -28,7 +28,16 @@ export var menuItems={
       "iconf":"fill-ecommerce",
       "type": "link",
       "badgeType": "light-primary",
-      "badgeValue": "5",
+      "badgeValue": "50",
+      "active": false
+    },
+    {
+      "path": "/app/portfolio",
+      "title": "Portfolio",
+      "icon": "stroke-charts",
+      "iconf":"fill-charts",
+      "type": "link",
+      "badgeType": "light-primary",
       "active": false
     },
 /*     {

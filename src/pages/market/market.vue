@@ -41,9 +41,6 @@
                             <div class="col-12">
                                 <input type="text" v-model="newCeleb.imgURL" class="form-control" placeholder="Image URL">
                             </div>
-                            <div class="col-12">
-                                <textarea v-model="newCeleb.desc" class="form-control" placeholder="Description" rows="3"></textarea>
-                            </div>
                             <div class="col-md-6">
                                 <input type="text" v-model="newCeleb.category" class="form-control" placeholder="Category">
                             </div>
@@ -83,13 +80,12 @@
                 <h3>Market</h3>
             </div>
 
-            <div>
+            <div class="table-responsive">
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
                         <th>Name</th>
                         <th>Image</th>
-                        <th>Description</th>
                         <th>Category</th>
                         <th>Owned</th>
                         <th>Average Price</th>
@@ -101,10 +97,9 @@
                         <tr v-for="celeb in celebs" :key="celeb.id">
                         <td>{{ celeb.firstName }} {{ celeb.lastName }}</td>
                         <td><div class="avatar"><img :src="celeb.imgURL" alt="celeb image" class="img-100 rounded-circle"></div></td>
-                        <td>{{ celeb.desc }}</td>
                         <td>{{ celeb.category }} - {{ celeb.subcategory }} - {{ celeb.team }}</td>
-                        <td>1.00</td>
-                        <td>1.00</td>
+                        <td>{{ celeb.owned }}</td>
+                        <td>{{ celeb.averagePrice }}</td>
                         <td>{{ celeb.currentPrice.toFixed(2) }}</td>
                         <td>
                             <button class="btn btn-primary btn-sm" @click="openBuyModal(celeb)">Buy</button>
@@ -215,10 +210,11 @@
 </template>
   
 <script>
-import Celebs from '@/data/celebs/celebs.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import Userauth from '@/auth/auth.js';
 import Wallet from "@/auth/wallet.js";
 import Transactions from '@/auth/transactions.js';
+import Celebs from '@/data/celebs/celebs.js';
 
 export default {
     data() {
@@ -228,7 +224,6 @@ export default {
             lastName: '',
             username: '', 
             imgURL: '', 
-            desc: '', 
             category: '', 
             subcategory: '', 
             team: '', 
@@ -298,6 +293,35 @@ export default {
             this.showSellModal = false;
         },
 
+        
+        async updatePortfolio(userId, celebId, quantity, price, isPurchase) {
+            const db = getFirestore();
+            const portfolioRef = doc(db, 'portfolios', userId);
+            const portfolioSnap = await getDoc(portfolioRef);
+            let portfolioData = portfolioSnap.exists() ? portfolioSnap.data() : {};
+            let celebHoldings = portfolioData.CelebHoldings || {};
+            let holdings = celebHoldings[celebId] || { bought: 0, sold: 0, owned: 0, averagePrice: 0 };
+
+            if (isPurchase) {
+                holdings.bought += quantity;
+                holdings.owned += quantity;
+                // Update average price calculation
+                holdings.averagePrice = ((holdings.averagePrice * (holdings.owned - quantity)) + (price * quantity)) / holdings.owned;
+            } else {
+                holdings.sold += quantity;
+                holdings.owned -= quantity;
+            }
+
+            celebHoldings[celebId] = holdings;
+            portfolioData.CelebHoldings = celebHoldings;
+
+            if (portfolioSnap.exists()) {
+                await updateDoc(portfolioRef, portfolioData);
+            } else {
+                await setDoc(portfolioRef, portfolioData);
+            }
+        },
+
         async confirmPurchase() {
             const newBalance = this.userBalance - this.totalPrice;
 
@@ -316,6 +340,10 @@ export default {
                     "Shares bought",
                     "bought",
                 );
+
+                // Update the portfolio
+                const userId = Userauth.getCurrentUser().uid;
+                await this.updatePortfolio(userId, this.selectedCeleb.id, quantityAsNumber, this.selectedCeleb.currentPrice, true);
 
                 // Update the user's wallet balance
                 const wallet = new Wallet(Userauth.getCurrentUser().uid);
@@ -360,6 +388,11 @@ export default {
                     "sold",
                 );
 
+                // Update the portfolio
+
+                const userId = Userauth.getCurrentUser().uid;
+                await this.updatePortfolio(userId, this.selectedCeleb.id, parseFloat(this.sellQuantity), this.selectedCeleb.currentPrice, false);
+ 
                 // Update the wallet balance
                 const wallet = new Wallet(Userauth.getCurrentUser().uid);
                 await wallet.updateBalance(newBalance);
@@ -396,6 +429,7 @@ export default {
         },
 
         async fetchData() {
+            // Fetching user balance
             const userId = Userauth.getCurrentUser().uid;
             const wallet = new Wallet(userId);
 
@@ -405,10 +439,31 @@ export default {
                 this.userBalance = walletSnapshot.data().balance;
             }
 
+            // Fetching celebrities
             this.celebs = await Celebs.getAllCelebs();
+
+            // Fetching user portfolio
+            const db = getFirestore();
+            const portfolioRef = doc(db, 'portfolios', userId);
+            const portfolioSnap = await getDoc(portfolioRef);
+
+            if (portfolioSnap.exists()) {
+                const celebHoldings = portfolioSnap.data().CelebHoldings || {};
+                this.updateCelebsWithPortfolio(celebHoldings);
+            }
+
+            // Fetching user role for admin check
             const userRole = await Userauth.getUserDetailsAndRole();
             this.isAdmin = userRole === 'admin';
         },
+
+        updateCelebsWithPortfolio(holdingsData) {
+            this.celebs = this.celebs.map(celeb => {
+                const holdings = holdingsData[celeb.id] || { owned: 0, averagePrice: 0 };
+                return { ...celeb, owned: holdings.owned, averagePrice: holdings.averagePrice };
+            });
+        },
+
 
         validateInput(quantityType) {
         // Check if the quantity type is valid
@@ -442,11 +497,11 @@ export default {
         
     async created() {
         await this.fetchData();
+
     },
 
     async mounted() {
 
-        await this.fetchData();
         Celebs.subscribeToCelebUpdates((updatedCelebs) => {
             this.celebs = updatedCelebs;
         });

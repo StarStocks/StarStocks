@@ -60,6 +60,9 @@ import Bookmark from "../pages/bookmark/bookMark.vue"
 // market 
 import Market from '../pages/market/market.vue'
 
+// portfolio 
+import Portfolio from '../auth/portfolio.vue'
+
 const routes = [
   {
     path: '/',
@@ -125,6 +128,14 @@ const routes = [
         name: 'Market',
         meta: {
           title: 'Market | Star Stocks',
+        }
+      },
+      {
+        path: 'portfolio',
+        component: Portfolio,
+        name: 'Portfolio',
+        meta: {
+          title: 'Portfolio | Star Stocks',
         }
       },
       {
