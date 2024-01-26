@@ -32,16 +32,16 @@ export var menuItems={
       "badgeType": "light-primary",
       "active": false
     },
-/*     {
+     {
       "path": "/app/leaderboards",
       "title": "Leaderboards",
       "icon": "stroke-charts",
       "iconf":"fill-charts",
       "type": "link",
       "active": false
-    }, */
+    },
 
-    
+
 /*     {
       "path": "/app/bookmark",
       "title": "Bookmarks",

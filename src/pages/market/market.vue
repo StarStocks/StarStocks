@@ -599,13 +599,15 @@ export default {
             if (newBalance >= 0) {
                 const quantityAsNumber = parseFloat(this.buyQuantity);
 
-                                // Calculate the price increase per share based on quantity
-                // Example: Decrease the price increase by a small percentage for each additional share
-                const basePriceIncrease = Math.random() * (1 - 0.01) + 0.01; // Base increase per share
-                const discountFactor = Math.random() * (1 - 0.01) + 0.01; // Discount per additional share
-                const priceIncreasePerShare = basePriceIncrease - (discountFactor * (quantityAsNumber - 1));
-                const adjustedPriceIncrease = Math.max(priceIncreasePerShare, 0); // Ensure it doesn't go below 0
-                const newCurrentPrice = this.selectedCeleb.currentPrice + (adjustedPriceIncrease * quantityAsNumber);
+                const baseIncreaseRate = 0.01; // 1% increase per share
+                const bulkDiscountRate = 0.001; // 0.1% discount per additional share
+
+                // Calculate the effective increase rate
+                const effectiveIncreaseRate = Math.max(baseIncreaseRate - (bulkDiscountRate * (quantityAsNumber - 1)), 0);
+                const totalIncrease = effectiveIncreaseRate * this.selectedCeleb.currentPrice * quantityAsNumber;
+
+                // Calculate the new current price
+                const newCurrentPrice = this.selectedCeleb.currentPrice + totalIncrease;
 
                 // Log the transaction
                 const transactions = new Transactions();
@@ -661,12 +663,16 @@ export default {
             const ownedShares = this.selectedCeleb.owned; // Assuming this represents the number of shares you own
 
             if (parseFloat(this.sellQuantity) > 0 && parseFloat(this.sellQuantity) <= ownedShares) {
-                // Price decrease logic
-                const basePriceDecrease = Math.random() * (1 - 0.01) + 0.01; // Base decrease per share
-                const discountFactor = Math.random() * (1 - 0.01) + 0.01; // Discount per additional share
-                const priceDecreasePerShare = basePriceDecrease - (discountFactor * (parseFloat(this.sellQuantity) - 1));
-                const adjustedPriceDecrease = Math.max(priceDecreasePerShare, 0); // Ensure it doesn't go below 0
-                const newCurrentPrice = Math.max(this.selectedCeleb.currentPrice - (adjustedPriceDecrease * parseFloat(this.sellQuantity)), 0); // Ensure the new price is not negative
+
+                const baseDecreaseRate = 0.01; // 1% decrease per share
+                const bulkDiscountRate = 0.001; // 0.1% discount per additional share
+
+                // Calculate the effective decrease rate
+                const effectiveDecreaseRate = Math.max(baseDecreaseRate - (bulkDiscountRate * (parseFloat(this.sellQuantity) - 1)), 0);
+                const totalDecrease = effectiveDecreaseRate * this.selectedCeleb.currentPrice * parseFloat(this.sellQuantity);
+
+                // Calculate the new current price
+                const newCurrentPrice = Math.max(this.selectedCeleb.currentPrice - totalDecrease, 0);
 
                 // Log the sell transaction
                 const transactions = new Transactions();
@@ -769,16 +775,17 @@ export default {
             const portfolioSnap = await getDoc(portfolioRef);
             let portfolioData = portfolioSnap.exists() ? portfolioSnap.data() : {};
             let celebHoldings = portfolioData.CelebHoldings || {};
-            let holdings = celebHoldings[celebId] || { bought: 0, sold: 0, owned: 0, averagePrice: 0 };
+            let holdings = celebHoldings[celebId] || { bought: 0, sold: 0, owned: 0, averagePrice: 0, totalInvested: 0, totalReturned: 0 };
 
             if (isPurchase) {
                 holdings.bought += quantity;
                 holdings.owned += quantity;
-                // Update average price calculation
+                holdings.totalInvested += quantity * price;
                 holdings.averagePrice = ((holdings.averagePrice * (holdings.owned - quantity)) + (price * quantity)) / holdings.owned;
             } else {
                 holdings.sold += quantity;
                 holdings.owned -= quantity;
+                holdings.totalReturned += quantity * price;
             }
 
             celebHoldings[celebId] = holdings;
@@ -789,40 +796,11 @@ export default {
             } else {
                 await setDoc(portfolioRef, portfolioData);
             }
+        }
 
-    }
     },
 
 
 
 };
 </script>
-
-<style scoped>
-.tree-list {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.tree-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-left: 24px;
-}
-
-.tree-row-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.tree-row-item input[type="checkbox"] {
-    margin-right: 10px;
-}
-
-/* Indentation for nested lists */
-.tree-list .tree-list {
-    padding-left: 20px;
-}
-</style>

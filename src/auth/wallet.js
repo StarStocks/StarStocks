@@ -19,8 +19,8 @@ export default class Wallet {
         this.userId,      // userID 
         "",               // celebID
         1,                // qty
-        1000,             // price
-        1000,             // totalprice
+        10000,             // price
+        10000,             // totalprice
         "New user registered - initial balance gifted", 
         "deposit"         // changeType
       );

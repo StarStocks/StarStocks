@@ -16,8 +16,7 @@ class Celeb {
       imgURL, 
       category, 
       subcategory, 
-      team, 
-      
+      team,       
       mentions, 
       issuePrice, 
       currentPrice,

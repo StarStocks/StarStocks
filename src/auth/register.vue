@@ -154,29 +154,37 @@ export default {
         const auth = getAuth();
         const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
 
-        // Once the user is registered, store additional user information in Firestore
         if (userCredential.user) {
-          const db = getFirestore();
-          const userDocRef = doc(db, "users", userCredential.user.uid);
-          await setDoc(userDocRef, {
-            username: username.value,
-            firstName: firstName.value,
-            lastName: lastName.value,
-            email: email.value,
-            role: "user",
-            createdAt: Timestamp.now()
-          });
+            const db = getFirestore();
+            const userId = userCredential.user.uid;
 
-          // Create a Wallet instance for the newly registered user
-          const userWallet = new Wallet(userCredential.user.uid);
-          
-          // Initialize the wallet
-          await userWallet.initializeWallet();
+            // Store user information
+            const userDocRef = doc(db, "users", userId);
+            await setDoc(userDocRef, {
+                username: username.value,
+                firstName: firstName.value,
+                lastName: lastName.value,
+                email: email.value,
+                role: "user",
+                createdAt: Timestamp.now()
+            });
 
-          router.push({ name: 'defaultRoot' }); // Use router instance directly
-        }
+            // Initialize the user's wallet
+            const initialWalletBalance = 1000;
+            const walletRef = doc(db, 'wallets', userId);
+            await setDoc(walletRef, { balance: initialWalletBalance });
+
+            // Create an initial leaderboard entry
+            const leaderboardRef = doc(db, 'leaderboard', userId);
+            await setDoc(leaderboardRef, { 
+              userId: userId,
+              score: initialWalletBalance 
+            });
+
+            router.push({ name: 'defaultRoot' });
+          }
       } catch (error) {
-        console.error("Registration error:", error.message);
+          console.error("Registration error:", error.message);
       }
     };
 
