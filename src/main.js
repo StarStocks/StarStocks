@@ -38,6 +38,13 @@ import { defaultLocale, localeOptions } from './constants/config';
 import Toast, {POSITION, useToast} from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import { initializeApp } from 'firebase/app';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
+
+
+library.add(faUserSecret)
+
 
 const config = {
    apiKey: "AIzaSyBTiaf_3zAOD2cQLTRmrasfwwYAEFM2_xc",
@@ -66,5 +73,5 @@ const config = {
 
     }
  });
-createApp(App).use(Toast).use(i18n).use(SimpleTypeahead).use(VueMasonryPlugin).use(VueNumber).use(Lightbox).use(store).use(VueAnimateOnScroll).use(Vue3Toasity).use(Toaster).use(router).component("settingPage", settingPage).component("b-card", bcard).use(PerfectScrollbar).use(DropZone).component('multiselect', Multiselect).component(VueFeather.name, VueFeather).component('Breadcrumbs', Breadcrumbs).mount('#app')
+createApp(App).use(Toast).use(i18n).use(SimpleTypeahead).use(VueMasonryPlugin).use(VueNumber).use(Lightbox).use(store).use(VueAnimateOnScroll).use(Vue3Toasity).use(Toaster).use(router).component("settingPage", settingPage).component('font-awesome-icon', FontAwesomeIcon).component("b-card", bcard).use(PerfectScrollbar).use(DropZone).component('multiselect', Multiselect).component(VueFeather.name, VueFeather).component('Breadcrumbs', Breadcrumbs).mount('#app')
 

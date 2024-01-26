@@ -9,18 +9,10 @@ export var menuItems={
       "path": "/",
       "title": "Dashboard",
       "icon": "stroke-home",
-      "iconf":"fill-home",
+      "iconf": "fill-home",
       "type": "link",
-      "active": false
+      "active": true
     },
-/*     {
-      "path": "/app/portfolio",
-      "title": "Portfolio",
-      "icon": "stroke-job-search",
-      "iconf":"fill-job-search",
-      "type": "link",
-      "active": false
-    }, */
     {
       "path": "/app/market",
       "title": "Market",
@@ -34,12 +26,22 @@ export var menuItems={
     {
       "path": "/app/portfolio",
       "title": "Portfolio",
-      "icon": "stroke-charts",
-      "iconf":"fill-charts",
+      "icon": "stroke-file",
+      "iconf":"fill-file",
       "type": "link",
       "badgeType": "light-primary",
       "active": false
     },
+/*     {
+      "path": "/app/leaderboards",
+      "title": "Leaderboards",
+      "icon": "stroke-charts",
+      "iconf":"fill-charts",
+      "type": "link",
+      "active": false
+    }, */
+
+    
 /*     {
       "path": "/app/bookmark",
       "title": "Bookmarks",
@@ -53,14 +55,6 @@ export var menuItems={
       "title": "Transactions",
       "icon": "stroke-task",
       "iconf":"fill-task",
-      "type": "link",
-      "active": false
-    },
-    {
-      "path": "/app/leaderboards",
-      "title": "Leaderboards",
-      "icon": "stroke-charts",
-      "iconf":"fill-charts",
       "type": "link",
       "active": false
     },

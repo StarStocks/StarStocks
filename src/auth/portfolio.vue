@@ -1,3 +1,4 @@
+<!-- portfolio.vue -->
 <template>
   <br>
   <div class="col-sm-12">
@@ -53,26 +54,26 @@
     name: 'Portfolio',
     setup() {
       const portfolioItems = ref([]);
-  
+
       const fetchPortfolio = async () => {
         const db = getFirestore();
         const userId = Userauth.getCurrentUser().uid;
         const portfolioRef = doc(db, 'portfolios', userId);
         const docSnap = await getDoc(portfolioRef);
-  
+
         if (docSnap.exists()) {
           const celebHoldings = docSnap.data().CelebHoldings;
           portfolioItems.value = await Promise.all(
-          Object.keys(celebHoldings).map(async celebId => {
-            const celebData = await Celebs.getCelebById(celebId);
-            return {
+            Object.keys(celebHoldings).map(async celebId => {
+              const celebData = await Celebs.getCelebById(celebId);
+              return {
                 ...celebData,
                 celebId,
                 celebName: celebData.firstName + ' ' + celebData.lastName,
-                owned: celebHoldings[celebId].owned,
-                averagePrice: celebHoldings[celebId].averagePrice,
-                currentPrice: celebData.currentPrice,
-                profitLoss: (celebData.currentPrice - celebHoldings[celebId].averagePrice) * celebHoldings[celebId].owned
+                owned: parseFloat(celebHoldings[celebId].owned).toFixed(2),
+                averagePrice: parseFloat(celebHoldings[celebId].averagePrice).toFixed(2),
+                currentPrice: parseFloat(celebData.currentPrice).toFixed(2),
+                profitLoss: (parseFloat(celebData.currentPrice) - parseFloat(celebHoldings[celebId].averagePrice)) * parseFloat(celebHoldings[celebId].owned)
               };
             })
           );
@@ -80,11 +81,10 @@
           console.log('No portfolio data found');
         }
       };
-  
-      onMounted(() => {
-        fetchPortfolio();
-      });
-  
+
+    onMounted(fetchPortfolio);
+
+
       return { portfolioItems };
     }
   };

@@ -63,6 +63,9 @@ import Market from '../pages/market/market.vue'
 // portfolio 
 import Portfolio from '../auth/portfolio.vue'
 
+// leaderboards 
+import Leaderboards from '../pages/leaderboards.vue'
+
 const routes = [
   {
     path: '/',
@@ -136,6 +139,14 @@ const routes = [
         name: 'Portfolio',
         meta: {
           title: 'Portfolio | Star Stocks',
+        }
+      },
+      {
+        path: 'leaderboards',
+        component: Leaderboards,
+        name: 'Leaderboards',
+        meta: {
+          title: 'Leaderboards | Star Stocks',
         }
       },
       {

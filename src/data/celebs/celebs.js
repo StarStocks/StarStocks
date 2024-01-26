@@ -1,5 +1,5 @@
 // Celebs.js
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, query, onSnapshot } from "firebase/firestore";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, query, onSnapshot } from "firebase/firestore";
 
 class Celeb {
   constructor() {
@@ -47,6 +47,16 @@ class Celeb {
     } else {
       throw new Error(`Celeb with ID ${celebId} not found.`);
     }
+  }
+
+  async updateCelebPrice(celebId, newPrice) {
+    const db = getFirestore();
+    const celebRef = doc(db, 'celebs', celebId);
+
+    // Update the current price
+    await updateDoc(celebRef, {
+        currentPrice: newPrice
+    });
   }
   
   subscribeToCelebUpdates(callback) {

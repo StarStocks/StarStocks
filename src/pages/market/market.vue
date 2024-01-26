@@ -19,14 +19,14 @@
     <div class="col-sm-6"> 
         <p>
         <!-- Trigger Button for Modal -->
-        <button v-if="isAdmin" class="btn btn-primary" @click="showModal = true">Add new Celebrity</button>
+        <button v-if="isAdmin" class="btn btn-primary" @click="showModal = true">Add new Star</button>
         </p>
         <!-- Modal -->
         <div v-if="showModal" class="modal fade show" style="display: block;" aria-modal="true" role="dialog">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Add New Celebrity</h5>
+                            <h5 class="modal-title">Add New Star</h5>
                             <button type="button" class="btn-close" @click="showModal = false"></button>
                         </div>
 
@@ -189,73 +189,89 @@
             </div>
         </div>
      </div> -->
-    
-    <div class="col-md-4">
-        <p>
-        <!-- Toggle Button -->
-        <button @click="toggleShowOwned" class="btn btn-primary">
-            {{ showOwnedOnly ? 'Show All Stars' : 'Show Owned Stars Only' }}
-        </button>
-        </p>
-    </div>
-
         
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header pb-0">
+                <div class="card-header">
                     <h5>Filters</h5>
-                </div><div class="card-body">
-                    <div id="treecheckbox">
-                        <div class="tree">
-                            <ul class="tree-list">
-                                <!-- Category -->
-                                <li class="tree-row">
-                                    <div class="tree-row-item">
-                                        <input type="checkbox" @change="toggleCategoryFilter('Football')">
-                                        <span class="tree-row-txt">Football</span>
-                                    </div>
-                                    <ul class="tree-list">
-                                        <!-- Subcategory -->
-                                        <li class="tree-row">
-                                            <div class="tree-row-item">
-                                                <input type="checkbox" @change="toggleSubCategoryFilter('English League')">
-                                                <span class="tree-row-txt">English League</span>
-                                            </div>
-                                            <ul class="tree-list">
-                                                <!-- Team -->
-                                                <li class="tree-row">
-                                                    <input type="checkbox" @change="toggleTeamFilter('Man Red')">
-                                                    <span class="tree-row-txt">Man Red</span>
-                                                </li>
-                                                <li class="tree-row">
-                                                    <input type="checkbox" @change="toggleTeamFilter('Man Blue')">
-                                                    <span class="tree-row-txt">Man Blue</span>
-                                                </li>
-                                                <li class="tree-row">
-                                                    <input type="checkbox" @change="toggleTeamFilter('Merseyside Red')">
-                                                    <span class="tree-row-txt">Merseyside Red</span>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <!-- ... Other Subcategories ... -->
-                                    </ul>
-                                </li>
-                                <!-- ... Other Categories ... -->
-                            </ul>
+                </div>
+                
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Owned</th>
+                                    <th>Categories</th>
+                                    <th>Subcategories</th>
+                                    <th>Teams</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>                        
+                                            <button @click="toggleShowOwned" class="btn btn-primary">
+                                                {{ showOwnedOnly ? 'Show All Stars' : 'Show Owned Stars Only' }}
+                                            </button>
+                                        </td>
+                                        <td> 
+                                            <input type="checkbox" @change="handleCheckboxChange('Football', $event)">
+                                            <span class="tree-row-txt">Football</span>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" @change="handleCheckboxChange('English League', $event)">
+                                            <span class="tree-row-txt">English League</span>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" @change="handleCheckboxChange('Man Red', $event)">
+                                            <span class="tree-row-txt">Man Red</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr>                     
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <input type="checkbox" @change="handleCheckboxChange('Man Red', $event)">
+                                            <span class="tree-row-txt">Man Blue</span>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <input type="checkbox" @change="handleCheckboxChange('Merseyside Red', $event)">
+                                            <span class="tree-row-txt">Merseyside Red</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td> 
+                                            <input type="checkbox" @change="handleCheckboxChange('Media', $event)">
+                                            <span class="tree-row-txt">Media</span>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
 
 
-
     <div class="table-responsive">
-        <table class="table table-striped table-hover">
+        <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Celebrity</th>
+                    <th>Star</th>
                     <th>Actions</th>
                     <th>Owned</th>
                     <th>Average Price</th>
@@ -267,7 +283,7 @@
                     <td>
                         <div class="d-flex align-items-center">
                             <div class="avatar me-2">
-                                <img :src="celeb.imgURL" alt="celeb image" class="img-100 rounded-circle">
+                                <img :src="celeb.imgURL" alt="celeb image" class="img-70 rounded-circle">
                             </div>
                                 <h6 class="mb-0">{{ celeb.firstName }} {{ celeb.lastName }}</h6>
                         </div>
@@ -278,9 +294,13 @@
                         <p></p>
                         <button class="btn btn-secondary btn-sm" @click="openSellModal(celeb)">Sell</button>
                     </td>
-                    <td>{{ celeb.owned }}</td>
-                    <td>{{ celeb.averagePrice }}</td>
-                    <td>{{ celeb.currentPrice.toFixed(2) }}</td>
+                    <td>{{ celeb.owned ? celeb.owned.toFixed(2) : '0.00' }}</td>
+                    <td>{{ celeb.averagePrice ? celeb.averagePrice.toFixed(2) : '0.00' }}</td>
+                    <td><span :class="{'text-success': celeb.currentPrice > celeb.issuePrice, 'text-danger': celeb.currentPrice < celeb.issuePrice}">
+                        {{ celeb.currentPrice ? celeb.currentPrice.toFixed(2) : '0.00' }}
+                        <i v-if="celeb.currentPrice > celeb.issuePrice" class="text-success">▲</i>
+                        <i v-if="celeb.currentPrice < celeb.issuePrice" class="text-danger">▼</i>
+                    </span></td>
                 </tr>
             </tbody>
         </table>
@@ -361,7 +381,7 @@
 
                         <br>
                         <div class="form-group">
-                            <label for="sellQuantity">Quantity to Sell</label>
+                            <label for="sellQuantity">Quantity to Sell (Maximum: {{ selectedCeleb && selectedCeleb.owned ? selectedCeleb.owned.toFixed(2) : '0.00' }})</label>
                             <input type="text" v-model="sellQuantity" @input="validateInput('sellQuantity')" class="form-control" id="sellQuantity" placeholder="Enter quantity">
                         </div>
 
@@ -385,6 +405,7 @@
   
 <script>
 import { getFirestore, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from "firebase/auth";
 import Userauth from '@/auth/auth.js';
 import Wallet from "@/auth/wallet.js";
 import Transactions from '@/auth/transactions.js';
@@ -406,10 +427,11 @@ export default {
             currentPrice: '',
             },
 
+            checkedCategories: {
+            'Football': false,
+            'English League': false,
+            },
             celebs: [], // Array to store celebrities
-            selectedCategory: null,
-            selectedSubCategory: null,
-            selectedTeam: null,
             showOwnedOnly: false,
             operationType: 'buy',
             showModal: false,
@@ -425,6 +447,30 @@ export default {
         };
     },
 
+           
+    async created() {
+        // Initial fetch when the component is created
+        await this.checkAndFetchData();
+    },
+    
+    async mounted() {
+        // Watch for authentication changes
+        onAuthStateChanged(Userauth.auth, async (user) => {
+            if (user) {
+                // User is signed in
+                await this.checkAndFetchData();
+            } else {
+                // User is signed out
+                // Handle the unauthenticated state
+            }
+        });
+                
+        // Subscribe to celeb updates
+        Celebs.subscribeToCelebUpdates((updatedCelebs) => {
+            this.celebs = updatedCelebs;
+        });
+    },
+
     computed: {
 
         totalPrice() {
@@ -434,35 +480,82 @@ export default {
             }
             return 0.00;
         },
-
-        // Computed property to filter celebrities
+        
         filteredCelebs() {
-            return this.celebs.filter(celeb => {
-                return (!this.selectedCategory || celeb.category === this.selectedCategory) &&
-                       (!this.selectedSubCategory || celeb.subcategory === this.selectedSubCategory) &&
-                       (!this.selectedTeam || celeb.team === this.selectedTeam);
-            });
+            let result = this.celebs;
+
+            // Filter based on 'showOwnedOnly'
+            if (this.showOwnedOnly) {
+                result = result.filter(celeb => celeb.owned > 0);
+            }
+
+            // Further filter based on checked categories
+            if (Object.values(this.checkedCategories).some(value => value)) {
+                result = result.filter(celeb => {
+                    // Check if any of the celeb's categories, subcategories, or teams are checked
+                    return this.checkedCategories[celeb.category] || 
+                        this.checkedCategories[celeb.subcategory] || 
+                        this.checkedCategories[celeb.team];
+                });
+            }
+
+            return result;
         },
     },
     
-    methods: {       
+    methods: {     
+
+        async checkAndFetchData() {
+            await this.fetchData();
+        },
+        
+        async fetchData() {
+            // Ensure user is authenticated before proceeding
+            if (!Userauth.isAuthenticated()) {
+                console.error("User not authenticated");
+                return; // Exit the function if user is not authenticated
+            }
+
+            const userId = Userauth.getCurrentUser().uid;
+
+            // Fetching user balance
+            const wallet = new Wallet(userId);
+            await wallet.initializeWallet();
+            const walletSnapshot = await wallet.getWalletData();
+            if (walletSnapshot.exists()) {
+                this.userBalance = walletSnapshot.data().balance;
+            } else {
+                console.log("No wallet data found for the user");
+            }
+
+            // Fetching celebrities
+            this.celebs = await Celebs.getAllCelebs();
+
+            // Fetching user portfolio
+            const db = getFirestore();
+            const portfolioRef = doc(db, 'portfolios', userId);
+            const portfolioSnap = await getDoc(portfolioRef);
+
+            if (portfolioSnap.exists()) {
+                const celebHoldings = portfolioSnap.data().CelebHoldings || {};
+                this.updateCelebsWithPortfolio(celebHoldings);
+            } else {
+                console.log("No portfolio data found for the user");
+            }
+
+            // Fetching user role for admin check
+            const userRole = await Userauth.getUserDetailsAndRole();
+            this.isAdmin = userRole === 'admin';
+        },
+
         
         // Method to toggle the state
         toggleShowOwned() {
             this.showOwnedOnly = !this.showOwnedOnly;
         },
 
-        toggleCategoryFilter(category) {
-            this.selectedCategory = this.selectedCategory === category ? null : category;
-            this.selectedSubCategory = null; // Reset subcategory and team filters
-            this.selectedTeam = null;
-        },
-        toggleSubCategoryFilter(subcategory) {
-            this.selectedSubCategory = this.selectedSubCategory === subcategory ? null : subcategory;
-            this.selectedTeam = null; // Reset team filter
-        },
-        toggleTeamFilter(team) {
-            this.selectedTeam = this.selectedTeam === team ? null : team;
+        handleCheckboxChange(category, event) {
+            this.checkedCategories[category] = event.target.checked;
         },
 
         async openBuyModal(celeb) {
@@ -485,13 +578,12 @@ export default {
         async openSellModal(celeb) {
             try {
                 const celebData = await Celebs.getCelebById(celeb.id);
-                this.selectedCeleb = celebData;
+                this.selectedCeleb = { ...celebData, owned: celeb.owned };
                 this.operationType = 'sell';
                 this.showSellModal = true;
-                this.sellQuantity = 0.00; // Reset or initialize buyQuantity
+                this.sellQuantity = 0.00;
             } catch (error) {
                 console.error("Error fetching celeb data:", error);
-                // Handle the error appropriately
             }
         },
 
@@ -499,7 +591,178 @@ export default {
             this.showSellModal = false;
         },
 
-        
+
+
+        async confirmPurchase() {
+            const newBalance = this.userBalance - this.totalPrice;
+
+            if (newBalance >= 0) {
+                const quantityAsNumber = parseFloat(this.buyQuantity);
+
+                                // Calculate the price increase per share based on quantity
+                // Example: Decrease the price increase by a small percentage for each additional share
+                const basePriceIncrease = Math.random() * (1 - 0.01) + 0.01; // Base increase per share
+                const discountFactor = Math.random() * (1 - 0.01) + 0.01; // Discount per additional share
+                const priceIncreasePerShare = basePriceIncrease - (discountFactor * (quantityAsNumber - 1));
+                const adjustedPriceIncrease = Math.max(priceIncreasePerShare, 0); // Ensure it doesn't go below 0
+                const newCurrentPrice = this.selectedCeleb.currentPrice + (adjustedPriceIncrease * quantityAsNumber);
+
+                // Log the transaction
+                const transactions = new Transactions();
+                await transactions.logTransaction(
+                    Userauth.getCurrentUser().uid,
+                    this.selectedCeleb.id,
+                    quantityAsNumber,
+                    this.selectedCeleb.currentPrice,
+                    this.totalPrice,
+                    "Shares bought",
+                    "bought",
+                );
+
+                // Update the portfolio
+                const userId = Userauth.getCurrentUser().uid;
+                await this.updatePortfolio(userId, this.selectedCeleb.id, quantityAsNumber, this.selectedCeleb.currentPrice, true);
+
+                // Update the celebrity's price in the database
+                await Celebs.updateCelebPrice(this.selectedCeleb.id, newCurrentPrice);
+
+                // Update the user's wallet balance
+                const wallet = new Wallet(Userauth.getCurrentUser().uid);
+                await wallet.updateBalance(newBalance);
+
+                // Update local user balance state
+                this.userBalance = newBalance;
+
+                // Close the modal
+                this.closeBuyModal();
+
+                // Fetch the updated data to reflect changes
+                await this.fetchData();
+
+                // Display an alert after a short delay
+                setTimeout(() => {
+                    alert("Purchase confirmed successfully.");
+                }, 100);
+
+            } else {
+                // Display an error message or prevent the purchase
+                setTimeout(() => {
+                    alert("Insufficient funds to make the purchase.");
+                }, 100);
+            }
+        },
+
+
+        async confirmSale() {
+            const newBalance = this.userBalance + this.totalPrice;
+
+            // Calculate the total sale amount
+            const totalSaleAmount = this.selectedCeleb.currentPrice * parseFloat(this.sellQuantity);
+            const ownedShares = this.selectedCeleb.owned; // Assuming this represents the number of shares you own
+
+            if (parseFloat(this.sellQuantity) > 0 && parseFloat(this.sellQuantity) <= ownedShares) {
+                // Price decrease logic
+                const basePriceDecrease = Math.random() * (1 - 0.01) + 0.01; // Base decrease per share
+                const discountFactor = Math.random() * (1 - 0.01) + 0.01; // Discount per additional share
+                const priceDecreasePerShare = basePriceDecrease - (discountFactor * (parseFloat(this.sellQuantity) - 1));
+                const adjustedPriceDecrease = Math.max(priceDecreasePerShare, 0); // Ensure it doesn't go below 0
+                const newCurrentPrice = Math.max(this.selectedCeleb.currentPrice - (adjustedPriceDecrease * parseFloat(this.sellQuantity)), 0); // Ensure the new price is not negative
+
+                // Log the sell transaction
+                const transactions = new Transactions();
+                await transactions.logTransaction(
+                    Userauth.getCurrentUser().uid,
+                    this.selectedCeleb.id,
+                    this.sellQuantity,
+                    this.selectedCeleb.currentPrice,
+                    totalSaleAmount,
+                    "Shares sold",
+                    "sold",
+                );
+
+                // Update the portfolio
+                const userId = Userauth.getCurrentUser().uid;
+                await this.updatePortfolio(userId, this.selectedCeleb.id, parseFloat(this.sellQuantity), this.selectedCeleb.currentPrice, false);
+ 
+                // Update the wallet balance
+                const wallet = new Wallet(Userauth.getCurrentUser().uid);
+                await wallet.updateBalance(newBalance);
+
+                // Update local user balance state
+                this.userBalance = newBalance;
+
+                // Update the celebrity's price in the database
+                await Celebs.updateCelebPrice(this.selectedCeleb.id, newCurrentPrice);
+
+                // Close the sell modal
+                this.closeSellModal();
+                
+                // Fetch the updated data to reflect changes
+                await this.fetchData();
+
+                // Display an alert after a short delay
+                setTimeout(() => {
+                    alert("Sale confirmed successfully.");
+                }, 100);
+
+            } else {
+                setTimeout(() => {
+                    alert("Sale declined. You do not own enough shares.");
+                }, 100);
+            }
+        },
+
+
+        async addNewCeleb() {
+            try {
+                const celebId = await Celebs.addCeleb(this.newCeleb);
+                console.log("New Celeb added with ID:", celebId);
+                // Clear form, update table, etc.
+                this.showModal = false;
+            } catch (error) {
+                console.error("Error adding celeb:", error);
+            }
+        },
+
+
+
+        updateCelebsWithPortfolio(holdingsData) {
+            this.celebs = this.celebs.map(celeb => {
+                const holdings = holdingsData[celeb.id] || { owned: 0, averagePrice: 0 };
+                return { ...celeb, owned: holdings.owned, averagePrice: holdings.averagePrice };
+            });
+        },
+
+
+
+        validateInput(quantityType) {
+            // Check if the quantity type is valid
+            if (!['buyQuantity', 'sellQuantity'].includes(quantityType)) {
+                console.error('Invalid quantity type for validation');
+                return;
+            }
+
+            // Remove any leading zeros
+            this[quantityType] = this[quantityType].replace(/^0+/, '');
+
+            // Remove any non-numeric or non-decimal characters (except one decimal point)
+            this[quantityType] = this[quantityType].replace(/[^0-9.]/g, '');
+
+            // Split the input into integer and decimal parts
+            const parts = this[quantityType].split('.');
+
+            // Ensure there's at most one decimal point
+            if (parts.length > 2) {
+                this[quantityType] = parts[0] + '.' + parts.slice(1).join('');
+            }
+
+            // Restrict to two decimal places
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 2); // Truncate to two decimal places
+                this[quantityType] = parts.join('.');
+            }        
+        },
+
         async updatePortfolio(userId, celebId, quantity, price, isPurchase) {
             const db = getFirestore();
             const portfolioRef = doc(db, 'portfolios', userId);
@@ -526,193 +789,12 @@ export default {
             } else {
                 await setDoc(portfolioRef, portfolioData);
             }
-        },
 
-        async confirmPurchase() {
-            const newBalance = this.userBalance - this.totalPrice;
-
-            if (newBalance >= 0) {
-                // Convert buyQuantity to a number
-                const quantityAsNumber = parseFloat(this.buyQuantity);
-
-                // Log the transaction
-                const transactions = new Transactions();
-                await transactions.logTransaction(
-                    Userauth.getCurrentUser().uid, // User ID
-                    this.selectedCeleb.id,
-                    quantityAsNumber,              // Converted quantity
-                    this.selectedCeleb.currentPrice,                    
-                    this.totalPrice,
-                    "Shares bought",
-                    "bought",
-                );
-
-                // Update the portfolio
-                const userId = Userauth.getCurrentUser().uid;
-                await this.updatePortfolio(userId, this.selectedCeleb.id, quantityAsNumber, this.selectedCeleb.currentPrice, true);
-
-                // Update the user's wallet balance
-                const wallet = new Wallet(Userauth.getCurrentUser().uid);
-                await wallet.updateBalance(newBalance);
-                
-                // Update local user balance state
-                this.userBalance = newBalance;
-
-                // Close the modal
-                this.closeBuyModal();
-
-                // Display an alert after a short delay
-                setTimeout(() => {
-                    alert("Purchase confirmed successfully.");
-                }, 100);
-
-            } else {
-                // Display an error message or prevent the purchase
-                setTimeout(() => {
-                    alert("Insufficient funds to make the purchase.");
-                }, 100);
-            }
-        },
-
-        async confirmSale() {
-            // Calculate the total sale amount
-            const totalSaleAmount = this.selectedCeleb.currentPrice * parseFloat(this.sellQuantity);
-
-            // Update the user's wallet balance
-            const newBalance = this.userBalance + totalSaleAmount;
-            
-            if (this.sellQuantity > 0 && totalSaleAmount <= this.userBalance) {
-                // Log the sell transaction
-                const transactions = new Transactions();
-                await transactions.logTransaction(
-                    Userauth.getCurrentUser().uid, // User ID
-                    this.selectedCeleb.id,
-                    this.sellQuantity,              // Quantity sold
-                    this.selectedCeleb.currentPrice,
-                    totalSaleAmount,
-                    "Shares sold",
-                    "sold",
-                );
-
-                // Update the portfolio
-
-                const userId = Userauth.getCurrentUser().uid;
-                await this.updatePortfolio(userId, this.selectedCeleb.id, parseFloat(this.sellQuantity), this.selectedCeleb.currentPrice, false);
- 
-                // Update the wallet balance
-                const wallet = new Wallet(Userauth.getCurrentUser().uid);
-                await wallet.updateBalance(newBalance);
-
-                // Update local user balance state
-                this.userBalance = newBalance;
-
-                // Close the sell modal
-                this.closeSellModal();
-
-                // Display an alert after a short delay
-                setTimeout(() => {
-                    alert("Sale confirmed successfully.");
-                }, 100);
-
-            } else {
-                // Display an error message or prevent the purchase
-                setTimeout(() => {
-                    alert("Sale declined.");
-                }, 100);
-            }
-        },
-
-
-        async addNewCeleb() {
-            try {
-                const celebId = await Celebs.addCeleb(this.newCeleb);
-                console.log("New Celeb added with ID:", celebId);
-                // Clear form, update table, etc.
-                this.showModal = false;
-            } catch (error) {
-                console.error("Error adding celeb:", error);
-            }
-        },
-
-        async fetchData() {
-            // Fetching user balance
-            const userId = Userauth.getCurrentUser().uid;
-            const wallet = new Wallet(userId);
-
-            await wallet.initializeWallet();
-            const walletSnapshot = await wallet.getWalletData();
-            if (walletSnapshot.exists()) {
-                this.userBalance = walletSnapshot.data().balance;
-            }
-
-            // Fetching celebrities
-            this.celebs = await Celebs.getAllCelebs();
-
-            // Fetching user portfolio
-            const db = getFirestore();
-            const portfolioRef = doc(db, 'portfolios', userId);
-            const portfolioSnap = await getDoc(portfolioRef);
-
-            if (portfolioSnap.exists()) {
-                const celebHoldings = portfolioSnap.data().CelebHoldings || {};
-                this.updateCelebsWithPortfolio(celebHoldings);
-            }
-
-            // Fetching user role for admin check
-            const userRole = await Userauth.getUserDetailsAndRole();
-            this.isAdmin = userRole === 'admin';
-        },
-
-        updateCelebsWithPortfolio(holdingsData) {
-            this.celebs = this.celebs.map(celeb => {
-                const holdings = holdingsData[celeb.id] || { owned: 0, averagePrice: 0 };
-                return { ...celeb, owned: holdings.owned, averagePrice: holdings.averagePrice };
-            });
-        },
-
-
-        validateInput(quantityType) {
-        // Check if the quantity type is valid
-        if (!['buyQuantity', 'sellQuantity'].includes(quantityType)) {
-            console.error('Invalid quantity type for validation');
-            return;
-        }
-
-        // Remove any leading zeros
-        this[quantityType] = this[quantityType].replace(/^0+/, '');
-
-        // Remove any non-numeric or non-decimal characters (except one decimal point)
-        this[quantityType] = this[quantityType].replace(/[^0-9.]/g, '');
-
-        // Split the input into integer and decimal parts
-        const parts = this[quantityType].split('.');
-
-        // Ensure there's at most one decimal point
-        if (parts.length > 2) {
-            this[quantityType] = parts[0] + '.' + parts.slice(1).join('');
-        }
-
-        // Restrict to two decimal places
-        if (parts.length === 2) {
-            parts[1] = parts[1].substring(0, 2); // Truncate to two decimal places
-            this[quantityType] = parts.join('.');
-        }
     }
     },
 
-        
-    async created() {
-        await this.fetchData();
 
-    },
 
-    async mounted() {
-
-        Celebs.subscribeToCelebUpdates((updatedCelebs) => {
-            this.celebs = updatedCelebs;
-        });
-
-    }
 };
 </script>
 
