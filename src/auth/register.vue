@@ -170,7 +170,7 @@ export default {
             });
 
             // Initialize the user's wallet
-            const initialWalletBalance = 1000;
+            const initialWalletBalance = 10000;
             const walletRef = doc(db, 'wallets', userId);
             await setDoc(walletRef, { balance: initialWalletBalance });
 
@@ -178,6 +178,7 @@ export default {
             const leaderboardRef = doc(db, 'leaderboard', userId);
             await setDoc(leaderboardRef, { 
               userId: userId,
+              username: username,
               score: initialWalletBalance 
             });
 

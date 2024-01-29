@@ -60,7 +60,8 @@ export default {
 
     async mounted() {
         const auth = getAuth();
-        onAuthStateChanged(getAuth(), async (user) => {
+        // Watch for authentication state changes
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 // Fetch user details
                 const db = getFirestore();
@@ -78,7 +79,12 @@ export default {
                 const walletSnap = await getDoc(walletRef);
 
                 if (walletSnap.exists()) {
-                    this.balance = walletSnap.data().balance; // Set balance
+                    let balanceValue = walletSnap.data().balance;
+                    if (typeof balanceValue === 'number') {
+                        this.balance = balanceValue.toFixed(2).toLocaleString('en-US'); // Format balance with comma separators
+                    } else {
+                        console.log("Balance is not a number");
+                    }
                 } else {
                     console.log("No such wallet document!");
                 }

@@ -1,3 +1,4 @@
+<!-- market.vue -->
 <template>   
     <br> 
     <div class="col-sm-6"> 
@@ -672,7 +673,12 @@ export default {
                 const totalDecrease = effectiveDecreaseRate * this.selectedCeleb.currentPrice * parseFloat(this.sellQuantity);
 
                 // Calculate the new current price
-                const newCurrentPrice = Math.max(this.selectedCeleb.currentPrice - totalDecrease, 0);
+                let newCurrentPrice = this.selectedCeleb.currentPrice - totalDecrease;
+
+                // Enforce a minimum price of 1
+                if (newCurrentPrice < 1) {
+                newCurrentPrice = 1;
+                }
 
                 // Log the sell transaction
                 const transactions = new Transactions();
@@ -775,28 +781,54 @@ export default {
             const portfolioSnap = await getDoc(portfolioRef);
             let portfolioData = portfolioSnap.exists() ? portfolioSnap.data() : {};
             let celebHoldings = portfolioData.CelebHoldings || {};
-            let holdings = celebHoldings[celebId] || { bought: 0, sold: 0, owned: 0, averagePrice: 0, totalInvested: 0, totalReturned: 0 };
+            let holdings = celebHoldings[celebId] || {
+                bought: 0,
+                sold: 0,
+                owned: 0,
+                averagePrice: 0,
+                totalInvested: 0,
+                totalReturned: 0
+            };
 
             if (isPurchase) {
                 holdings.bought += quantity;
                 holdings.owned += quantity;
-                holdings.totalInvested += quantity * price;
+                let newInvested = holdings.totalInvested + (quantity * price);
+                holdings.totalInvested = isNaN(newInvested) ? holdings.totalInvested : newInvested;
+                // Update average price only if there are owned shares
+                if (holdings.owned > 0) {
                 holdings.averagePrice = ((holdings.averagePrice * (holdings.owned - quantity)) + (price * quantity)) / holdings.owned;
+                }
             } else {
                 holdings.sold += quantity;
                 holdings.owned -= quantity;
-                holdings.totalReturned += quantity * price;
+                let newReturned = holdings.totalReturned + (quantity * price);
+                holdings.totalReturned = isNaN(newReturned) ? holdings.totalReturned : newReturned;
             }
+
+            // Validate holdings to ensure no NaN values
+            Object.keys(holdings).forEach(key => {
+                if (typeof holdings[key] === 'number' && isNaN(holdings[key])) {
+                console.error(`${key} is NaN for celebId: ${celebId}, resetting to 0.`);
+                holdings[key] = 0; // Reset NaN to 0 or handle as needed
+                }
+            });
 
             celebHoldings[celebId] = holdings;
             portfolioData.CelebHoldings = celebHoldings;
 
-            if (portfolioSnap.exists()) {
+            try {
+                if (portfolioSnap.exists()) {
                 await updateDoc(portfolioRef, portfolioData);
-            } else {
+                } else {
                 await setDoc(portfolioRef, portfolioData);
+                }
+                console.log(`Portfolio updated for userId: ${userId}, celebId: ${celebId}`);
+            } catch (error) {
+                console.error(`Error updating portfolio for userId: ${userId}, celebId: ${celebId}: `, error);
             }
-        }
+            }
+
 
     },
 

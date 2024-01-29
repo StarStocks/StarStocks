@@ -1,11 +1,11 @@
+<!-- leaderboards.vue -->
 <template>
   <br>
   <div class="col-sm-12">
     <div class="card">
       <div class="card-header">
-          <h3>Leaderboard</h3>
+        <h3>Leaderboard</h3>
       </div>
-
       <div class="table-responsive">
         <table class="table table-striped table-hover">
           <thead>
@@ -15,9 +15,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in users" :key="user.id">
-              <td>{{ user.username }}</td>
-              <td>{{ user.score }}</td>
+            <tr v-for="entry in sortedLeaderboard" :key="entry.userId">
+              <td>{{ entry.username }}</td>
+              <td>{{ formatScore(entry.score) }}</td>
             </tr>
           </tbody>
         </table>
@@ -28,70 +28,89 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { getFirestore, collection,getDoc, getDocs, doc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import Celebs from '@/data/celebs/celebs.js';
 
 export default {
   name: 'Leaderboard',
   setup() {
-    const users = ref([]);
+    const leaderboardEntries = ref([]);
 
-    onMounted(fetchUsers);
+    onMounted(async () => {
+      await fetchLeaderboard();
+    });
 
-    async function fetchUsers() {
+    function formatScore(score) {
+      return parseFloat(score).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    }
+
+    async function fetchLeaderboard() {
       const db = getFirestore();
-      const leaderboardRef = collection(db, 'leaderboard');
-      const leaderboardSnap = await getDocs(leaderboardRef);
+      const leaderboardRef = collection(db, 'users'); // Assuming user data is stored in 'users' collection
+      const snapshot = await getDocs(leaderboardRef);
 
-      users.value = await Promise.all(
-        leaderboardSnap.docs.map(async (doc) => {
-          const userId = doc.id;
-          const userData = await getUserData(db, userId);
-          const walletData = await getWalletData(db, userId);
-          const portfolioValue = await calculatePortfolioValue(db, userId);
-          const score = walletData.balance + portfolioValue;
+      leaderboardEntries.value = await Promise.all(
+        snapshot.docs.map(async userDoc => {
+          const data = userDoc.data();
+          const userId = userDoc.id;
+
+          // Retrieve user's wallet balance
+          const walletRef = doc(db, 'wallets', userId);
+          const walletSnap = await getDoc(walletRef);
+          const walletBalance = walletSnap.exists() ? walletSnap.data().balance : 0;
+
+          // Retrieve user's celeb holdings
+          const portfolioRef = doc(db, 'portfolios', userId);
+          const portfolioSnap = await getDoc(portfolioRef);
+          const portfolioData = portfolioSnap.exists() ? portfolioSnap.data() : { CelebHoldings: {} };
+          const celebHoldings = portfolioData.CelebHoldings;
+
+          let totalGains = 0;
+
+          if (Object.keys(celebHoldings).length > 0) {
+            for (const celebId in celebHoldings) {
+              const holdings = celebHoldings[celebId];
+              if (holdings && holdings.quantity) {
+                const currentMarketValue = await getCurrentMarketValue(celebId); 
+                const quantity = parseFloat(holdings.quantity) || 0;
+                const totalInvested = parseFloat(holdings.totalInvested) || 0;
+                const currentValue = quantity * currentMarketValue;
+                totalGains += currentValue - totalInvested;
+              }
+            }
+          }
+
+          // Calculate the score as wallet balance + unrealized gains
+          const score = walletBalance + totalGains;
+
           return {
-            id: userId,
-            username: userData.username,
-            score: score.toFixed(2)
+            userId,
+            username: data.username,
+            score: score.toFixed(2),
           };
         })
       );
+
+      // Sort the leaderboardEntries array by score in descending order
+      leaderboardEntries.value.sort((a, b) => b.score - a.score);
     }
 
-    async function getWalletData(db, userId) {
-      const walletRef = doc(db, 'wallets', userId);
-      const walletSnap = await getDoc(walletRef);
-      return walletSnap.exists() ? walletSnap.data() : { balance: 0 };
-    }
-
-    async function calculatePortfolioValue(db, userId) {
-      let totalPortfolioValue = 0;
-      const portfolioRef = doc(db, 'portfolios', userId);
-      const portfolioSnap = await getDoc(portfolioRef);
-      if (portfolioSnap.exists()) {
-        const celebHoldings = portfolioSnap.data().CelebHoldings;
-        for (const celebId in celebHoldings) {
-          const holdings = celebHoldings[celebId];
-          const celebData = await Celebs.getCelebById(celebId);
-          totalPortfolioValue += holdings.owned * celebData.currentPrice;
-        }
-      }
-      return totalPortfolioValue;
-    }
-
-    async function getUserData(db, userId) {
-      const userRef = doc(db, 'users', userId);
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        return userDoc.data();
+    async function getCurrentMarketValue(celebId) {
+      const celebData = await Celebs.getCelebById(celebId);
+      if (celebData) {
+        const currentPrice = parseFloat(celebData.currentPrice) || 0;
+        return currentPrice;
       } else {
-        console.error(`User data not found for user with ID: ${userId}`);
-        return { username: 'Unknown' };
+        console.error(`Data missing for celebId: ${celebId}`);
+        return 0; // Return 0 if data is missing
       }
     }
 
-    return { users };
-  }
+    return {
+      leaderboardEntries,
+      sortedLeaderboard: leaderboardEntries,
+      formatScore,
+    };
+  },
 };
 </script>
