@@ -36,9 +36,6 @@
                                     <input type="text" v-model="newCeleb.team" class="form-control" placeholder="Team">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="number" v-model="newCeleb.mentions" class="form-control" placeholder="Mentions">
-                                </div>
-                                <div class="col-md-6">
                                     <input type="number" v-model="newCeleb.issuePrice" class="form-control" placeholder="Issue Price">
                                 </div>
                                 <div class="col-md-6">
@@ -189,8 +186,8 @@
                                             <button @click="toggleShowOwned" class="btn btn-primary">
                                                 {{ showOwnedOnly ? 'Show All Stars' : 'Show Owned Stars Only' }}
                                             </button>
-                                            <button v-if="isAdmin" class="btn btn-primary" @click="showModal = true">Add new Star</button>
-                                            <button v-if="isAdmin" class="btn btn-primary" @click="updateAllCelebMentions">Get Mentions</button>
+                                            <button v-if="isAdmin" class="btn btn-warning" @click="showModal = true">Add new (Admin)</button>
+                                            <button v-if="isAdmin" class="btn btn-warning" @click="updateAllCelebMentions">Get score (Admin)</button>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -307,7 +304,6 @@
                         <th>Owned</th>
                         <th>Average Price</th>
                         <th>Current Price</th>
-                        <th>News</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -328,12 +324,22 @@
                         </td>
                         <td>{{ celeb.owned ? celeb.owned.toFixed(2) : '0.00' }}</td>
                         <td>{{ celeb.averagePrice ? celeb.averagePrice.toFixed(2) : '0.00' }}</td>
-                        <td><span :class="{'text-success': celeb.currentPrice > celeb.issuePrice, 'text-danger': celeb.currentPrice < celeb.issuePrice}">
-                            {{ celeb.currentPrice ? celeb.currentPrice.toFixed(2) : '0.00' }}
-                            <i v-if="celeb.currentPrice > celeb.issuePrice" class="text-success">▲</i>
-                            <i v-if="celeb.currentPrice < celeb.issuePrice" class="text-danger">▼</i>
-                        </span></td>
-                        <td>{{ celeb.mentions }}</td>
+                        <td>
+                            <span :class="{'badge rounded-pill badge-success': celeb.varmentions > 0, 'badge rounded-pill badge-danger': celeb.varmentions < 0}">
+                                {{ celeb.currentPrice ? celeb.currentPrice.toFixed(2) : '0.00' }}
+                            </span>
+                                <i v-if="celeb.varmentions > 0" class="text-success">
+                                    <div class="font-success f-w-500"><i class="icon-arrow-up icon-rotate me-1"></i><span>{{ celeb.varmentions }}</span></div>
+                                </i>
+
+                                <i v-if="celeb.varmentions < 0" class="text-danger">                                    
+                                    <div class="font-danger f-w-500"><i class="icon-arrow-down icon-rotate me-1"></i><span>{{ celeb.varmentions }}</span></div>
+                                </i>
+                            
+                        </td>
+                        
+
+
                     </tr>
                 </tbody>
             </table>
@@ -455,7 +461,9 @@ export default {
             category: '', 
             subcategory: '', 
             team: '', 
+            prevmentions: '',
             mentions: '', 
+            varmentions: '', 
             issuePrice: '', 
             currentPrice: '',
             },
@@ -644,16 +652,6 @@ export default {
             if (newBalance >= 0) {
                 const quantityAsNumber = parseFloat(this.buyQuantity);
 
-                const baseIncreaseRate = 0.01; // 1% increase per share
-                const bulkDiscountRate = 0.001; // 0.1% discount per additional share
-
-                // Calculate the effective increase rate
-                const effectiveIncreaseRate = Math.max(baseIncreaseRate - (bulkDiscountRate * (quantityAsNumber - 1)), 0);
-                const totalIncrease = effectiveIncreaseRate * this.selectedCeleb.currentPrice * quantityAsNumber;
-
-                // Calculate the new current price
-                const newCurrentPrice = this.selectedCeleb.currentPrice + totalIncrease;
-
                 // Log the transaction
                 const transactions = new Transactions();
                 await transactions.logTransaction(
@@ -669,9 +667,6 @@ export default {
                 // Update the portfolio
                 const userId = Userauth.getCurrentUser().uid;
                 await this.updatePortfolio(userId, this.selectedCeleb.id, quantityAsNumber, this.selectedCeleb.currentPrice, true);
-
-                // Update the celebrity's price in the database
-                await Celebs.updateCelebPrice(this.selectedCeleb.id, newCurrentPrice);
 
                 // Update the user's wallet balance
                 const wallet = new Wallet(Userauth.getCurrentUser().uid);
@@ -709,21 +704,6 @@ export default {
 
             if (parseFloat(this.sellQuantity) > 0 && parseFloat(this.sellQuantity) <= ownedShares) {
 
-                const baseDecreaseRate = 0.01; // 1% decrease per share
-                const bulkDiscountRate = 0.001; // 0.1% discount per additional share
-
-                // Calculate the effective decrease rate
-                const effectiveDecreaseRate = Math.max(baseDecreaseRate - (bulkDiscountRate * (parseFloat(this.sellQuantity) - 1)), 0);
-                const totalDecrease = effectiveDecreaseRate * this.selectedCeleb.currentPrice * parseFloat(this.sellQuantity);
-
-                // Calculate the new current price
-                let newCurrentPrice = this.selectedCeleb.currentPrice - totalDecrease;
-
-                // Enforce a minimum price of 1
-                if (newCurrentPrice < 1) {
-                newCurrentPrice = 1;
-                }
-
                 // Log the sell transaction
                 const transactions = new Transactions();
                 await transactions.logTransaction(
@@ -746,9 +726,6 @@ export default {
 
                 // Update local user balance state
                 this.userBalance = newBalance;
-
-                // Update the celebrity's price in the database
-                await Celebs.updateCelebPrice(this.selectedCeleb.id, newCurrentPrice);
 
                 // Close the sell modal
                 this.closeSellModal();

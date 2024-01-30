@@ -16,11 +16,11 @@
         <thead>
           <tr>
             <th>Celebrity</th>
-            <th>Profit/Loss</th>
             <th>Shares Owned</th>
             <th>Average Price</th>
             <th>Current Price</th>
             <th>Current Value</th>
+            <th>Profit/Loss</th>
             <th>Invested</th>
             <th>Returned</th>
             <th>Gains</th>
@@ -36,15 +36,15 @@
                 <h6 class="mb-0">{{ item.celebName }}</h6>
               </div>
             </td>
+            <td>{{ item.owned }}</td>
+            <td>{{ item.averagePrice }}</td>
+            <td>{{ item.currentPrice }}</td>
+            <td>{{ (item.currentPrice * item.owned).toFixed(2) }}</td>
             <td :class="{ profit: item.profitLoss >= 0, loss: item.profitLoss < 0 }">
               {{ item.profitLoss }}
               <i v-if="item.profitLoss > 0" class="text-success">▲</i>
               <i v-if="item.profitLoss < 0" class="text-danger">▼</i>
             </td>
-            <td>{{ item.owned }}</td>
-            <td>{{ item.averagePrice }}</td>
-            <td>{{ item.currentPrice }}</td>
-            <td>{{ (item.currentPrice * item.owned).toFixed(2) }}</td>
             <td>{{ item.totalInvested }}</td>
             <td>{{ item.totalReturned }}</td>
             <td>{{ item.gains }}</td>

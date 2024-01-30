@@ -9,6 +9,41 @@ class Celeb {
     this.celebsRef = collection(this.db, 'celebs');
   }
 
+  async updateAllCelebMentions(updateCelebMentions) {
+    const celebs = await this.getAllCelebs();
+    for (const celeb of celebs) {
+      try {
+        // Store the current mentions in 'prevmentions'
+        const currentMentions = celeb.mentions;
+        await updateDoc(doc(this.db, 'celebs', celeb.id), { prevmentions: currentMentions });
+  
+        // Fetch and update new mentions
+        const newMentions = await this.getMentionsFromAPI(celeb.username);
+        await updateCelebMentions(celeb.id, newMentions);
+  
+        // Calculate the variance in mentions
+        const varmentions = newMentions - currentMentions;
+  
+        // Update the variance in mentions in the database
+        await updateDoc(doc(this.db, 'celebs', celeb.id), { varmentions: varmentions });
+  
+        // Calculate the new current price by adding the variance to the existing price
+        let newCurrentPrice = celeb.currentPrice + varmentions;
+  
+        // Apply price floor and cap
+        newCurrentPrice = Math.max(10, Math.min(newCurrentPrice, 250));
+  
+        // Update the celebrity's current price in the database
+        await updateDoc(doc(this.db, 'celebs', celeb.id), { currentPrice: newCurrentPrice });
+  
+      } catch (error) {
+        console.error(`Error updating mentions for ${celeb.username}:`, error);
+      }
+    }
+  }
+  
+  
+  
   async getMentionsFromAPI(celebName) {
     try {
       const response = await axios.get(`https://StarStocks.pythonanywhere.com/celebscores`, { params: { name: celebName } });
@@ -16,18 +51,6 @@ class Celeb {
       return response.data.mentions;
     } catch (error) {
       console.error('Error fetching mentions:', error);
-    }
-  }
-  
-  async updateAllCelebMentions(updateCelebMentions) {
-    const celebs = await this.getAllCelebs();
-    for (const celeb of celebs) {
-      try {
-        const mentions = await this.getMentionsFromAPI(celeb.username);
-        await updateCelebMentions(celeb.id, mentions);
-      } catch (error) {
-        console.error(`Error updating mentions for ${celeb.username}:`, error);
-      }
     }
   }
   
