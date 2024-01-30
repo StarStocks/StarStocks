@@ -40,7 +40,7 @@ export default class Wallet {
   async updateBalance(newBalance) {
     try {
       await updateDoc(this.walletRef, { balance: newBalance });
-      console.log("Wallet balance updated successfully");
+      // console.log("Wallet balance updated successfully");
     } catch (error) {
       console.error("Error updating wallet balance:", error);
       throw error;

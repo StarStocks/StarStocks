@@ -165,7 +165,7 @@ export default {
                 firstName: firstName.value,
                 lastName: lastName.value,
                 email: email.value,
-                role: "user",
+                role: "Free Account",
                 createdAt: Timestamp.now()
             });
 

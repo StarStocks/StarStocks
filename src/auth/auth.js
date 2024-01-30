@@ -60,13 +60,17 @@ class Userauth {
 
     if (docSnap.exists()) {
         const userData = docSnap.data();
-        const role = userData.role || null;
-        return role; // Return the role directly
+        return {
+            username: userData.username,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            role: userData.role,
+            email: this.user.email,
+        };
     } else {
         return null;
     }
-}
-  
+  }
 }
 
 

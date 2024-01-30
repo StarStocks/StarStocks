@@ -2,26 +2,7 @@
 <template>   
     <br> 
     <div class="col-sm-6"> 
-        <div class="card small-widget mb-sm-0"> 
-            <div class="card-body success"><span class="f-light">Balance</span>
-                <div class="d-flex align-items-end gap-1">
-                    <h4>{{ this.userBalance.toFixed(2) }}</h4>
-                </div>
 
-                <div class="bg-gradient">
-                    <svg class="stroke-icon svg-fill">
-                    <use href="@/assets/svg/icon-sprite.svg#profit"></use>
-                    </svg>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br>
-    <div class="col-sm-6"> 
-        <p>
-        <!-- Trigger Button for Modal -->
-        <button v-if="isAdmin" class="btn btn-primary" @click="showModal = true">Add new Star</button>
-        </p>
         <!-- Modal -->
         <div v-if="showModal" class="modal fade show" style="display: block;" aria-modal="true" role="dialog">
             <div class="modal-dialog modal-dialog-centered">
@@ -191,6 +172,55 @@
         </div>
      </div> -->
         
+    <div class="container-fluid">
+        <div class="row widget-grid">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Filters</h5>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <button @click="toggleShowOwned" class="btn btn-primary">
+                                                {{ showOwnedOnly ? 'Show All Stars' : 'Show Owned Stars Only' }}
+                                            </button>
+                                            <button v-if="isAdmin" class="btn btn-primary" @click="showModal = true">Add new Star</button>
+                                            <button v-if="isAdmin" class="btn btn-primary" @click="updateAllCelebMentions">Get Mentions</button>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6"> 
+                <div class="card small-widget mb-sm-0"> 
+                    <div class="card-body success"><span class="f-light">Balance</span>
+                        <div class="d-flex align-items-end gap-1">
+                            <h4>{{ this.userBalance.toFixed(2) }}</h4>
+                        </div>
+
+                        <div class="bg-gradient">
+                            <svg class="stroke-icon svg-fill">
+                            <use href="@/assets/svg/icon-sprite.svg#profit"></use>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    
+
+
+        <!-- 
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
@@ -266,141 +296,143 @@
                 </div>
             </div>
         </div>
+        -->
 
-
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Star</th>
-                    <th>Actions</th>
-                    <th>Owned</th>
-                    <th>Average Price</th>
-                    <th>Current Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="celeb in filteredCelebs" :key="celeb.id">
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <div class="avatar me-2">
-                                <img :src="celeb.imgURL" alt="celeb image" class="img-70 rounded-circle">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Star</th>
+                        <th>Actions</th>
+                        <th>Owned</th>
+                        <th>Average Price</th>
+                        <th>Current Price</th>
+                        <th>News</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="celeb in filteredCelebs" :key="celeb.id">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-2">
+                                    <img :src="celeb.imgURL" alt="celeb image" class="img-70 rounded-circle">
+                                </div>
+                                    <h6 class="mb-0">{{ celeb.firstName }} {{ celeb.lastName }}</h6>
                             </div>
-                                <h6 class="mb-0">{{ celeb.firstName }} {{ celeb.lastName }}</h6>
-                        </div>
-                    </td>
+                        </td>
 
-                    <td>
-                        <button class="btn btn-primary btn-sm" @click="openBuyModal(celeb)">Buy</button>
-                        <p></p>
-                        <button class="btn btn-secondary btn-sm" @click="openSellModal(celeb)">Sell</button>
-                    </td>
-                    <td>{{ celeb.owned ? celeb.owned.toFixed(2) : '0.00' }}</td>
-                    <td>{{ celeb.averagePrice ? celeb.averagePrice.toFixed(2) : '0.00' }}</td>
-                    <td><span :class="{'text-success': celeb.currentPrice > celeb.issuePrice, 'text-danger': celeb.currentPrice < celeb.issuePrice}">
-                        {{ celeb.currentPrice ? celeb.currentPrice.toFixed(2) : '0.00' }}
-                        <i v-if="celeb.currentPrice > celeb.issuePrice" class="text-success">▲</i>
-                        <i v-if="celeb.currentPrice < celeb.issuePrice" class="text-danger">▼</i>
-                    </span></td>
-                </tr>
-            </tbody>
-        </table>
+                        <td>
+                            <button class="btn btn-primary btn-sm" @click="openBuyModal(celeb)">Buy</button>
+                            <p></p>
+                            <button class="btn btn-secondary btn-sm" @click="openSellModal(celeb)">Sell</button>
+                        </td>
+                        <td>{{ celeb.owned ? celeb.owned.toFixed(2) : '0.00' }}</td>
+                        <td>{{ celeb.averagePrice ? celeb.averagePrice.toFixed(2) : '0.00' }}</td>
+                        <td><span :class="{'text-success': celeb.currentPrice > celeb.issuePrice, 'text-danger': celeb.currentPrice < celeb.issuePrice}">
+                            {{ celeb.currentPrice ? celeb.currentPrice.toFixed(2) : '0.00' }}
+                            <i v-if="celeb.currentPrice > celeb.issuePrice" class="text-success">▲</i>
+                            <i v-if="celeb.currentPrice < celeb.issuePrice" class="text-danger">▼</i>
+                        </span></td>
+                        <td>{{ celeb.mentions }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <div v-if="showBuyModal" class="modal fade show" style="display: block;" aria-modal="true" role="dialog">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Buy shares in {{ selectedCeleb.firstName }} {{ selectedCeleb.lastName }}</h5>
-                        <button type="button" class="btn-close" @click="closeBuyModal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                            <th>Current Balance</th>
-                            <th>Current Price</th>
-                            <th>Total Price</th>
-                            <th>New Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td>{{ this.userBalance.toFixed(2) }}</td>
-                            <td>{{ selectedCeleb ? selectedCeleb.currentPrice.toFixed(2) : '' }}</td>
-                            <td>{{ totalPrice.toFixed(2) }}</td>
-                            <td>{{ (this.userBalance - totalPrice).toFixed(2) }}</td>
-                            </tr>
-                        </tbody>
-                        </table>
-
-                        <br>
-                        <div class="form-group">
-                            <label for="buyQuantity">Quantity to Buy</label>
-                            <input type="text" v-model="buyQuantity" @input="validateInput('buyQuantity')" class="form-control" id="buyQuantity" placeholder="Enter quantity">
+            <div v-if="showBuyModal" class="modal fade show" style="display: block;" aria-modal="true" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Buy shares in {{ selectedCeleb.firstName }} {{ selectedCeleb.lastName }}</h5>
+                            <button type="button" class="btn-close" @click="closeBuyModal"></button>
                         </div>
 
-                    </div>
+                        <div class="modal-body">
+                            <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                <th>Current Balance</th>
+                                <th>Current Price</th>
+                                <th>Total Price</th>
+                                <th>New Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>{{ this.userBalance.toFixed(2) }}</td>
+                                <td>{{ selectedCeleb ? selectedCeleb.currentPrice.toFixed(2) : '' }}</td>
+                                <td>{{ totalPrice.toFixed(2) }}</td>
+                                <td>{{ (this.userBalance - totalPrice).toFixed(2) }}</td>
+                                </tr>
+                            </tbody>
+                            </table>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="closeBuyModal">Cancel</button>
-                        <button type="button" class="btn btn-primary" @click="confirmPurchase">Buy</button>
+                            <br>
+                            <div class="form-group">
+                                <label for="buyQuantity">Quantity to Buy</label>
+                                <input type="text" v-model="buyQuantity" @input="validateInput('buyQuantity')" class="form-control" id="buyQuantity" placeholder="Enter quantity">
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="closeBuyModal">Cancel</button>
+                            <button type="button" class="btn btn-primary" @click="confirmPurchase">Buy</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div v-if="showBuyModal" class="modal-backdrop fade show"></div>
+            
+            <div v-if="showBuyModal" class="modal-backdrop fade show"></div>
 
-        <div v-if="showSellModal" class="modal fade show" style="display: block;" aria-modal="true" role="dialog">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Sell shares in {{ selectedCeleb.firstName }} {{ selectedCeleb.lastName }}</h5>
-                        <button type="button" class="btn-close" @click="closeSellModal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                            <th>Current Balance</th>
-                            <th>Current Price</th>
-                            <th>Total Price</th>
-                            <th>New Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td>{{ this.userBalance.toFixed(2) }}</td>
-                            <td>{{ selectedCeleb ? selectedCeleb.currentPrice.toFixed(2) : '' }}</td>
-                            <td>{{ totalPrice.toFixed(2) }}</td>
-                            <td>{{ (this.userBalance + totalPrice).toFixed(2) }}</td>
-                            </tr>
-                        </tbody>
-                        </table>
-
-                        <br>
-                        <div class="form-group">
-                            <label for="sellQuantity">Quantity to Sell (Maximum: {{ selectedCeleb && selectedCeleb.owned ? selectedCeleb.owned.toFixed(2) : '0.00' }})</label>
-                            <input type="text" v-model="sellQuantity" @input="validateInput('sellQuantity')" class="form-control" id="sellQuantity" placeholder="Enter quantity">
+            <div v-if="showSellModal" class="modal fade show" style="display: block;" aria-modal="true" role="dialog">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Sell shares in {{ selectedCeleb.firstName }} {{ selectedCeleb.lastName }}</h5>
+                            <button type="button" class="btn-close" @click="closeSellModal"></button>
                         </div>
 
-                    </div>
+                        <div class="modal-body">
+                            <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                <th>Current Balance</th>
+                                <th>Current Price</th>
+                                <th>Total Price</th>
+                                <th>New Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>{{ this.userBalance.toFixed(2) }}</td>
+                                <td>{{ selectedCeleb ? selectedCeleb.currentPrice.toFixed(2) : '' }}</td>
+                                <td>{{ totalPrice.toFixed(2) }}</td>
+                                <td>{{ (this.userBalance + totalPrice).toFixed(2) }}</td>
+                                </tr>
+                            </tbody>
+                            </table>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="closeSellModal">Cancel</button>
-                        <button type="button" class="btn btn-primary" @click="confirmSale">Sell</button>
+                            <br>
+                            <div class="form-group">
+                                <label for="sellQuantity">Quantity to Sell (Maximum: {{ selectedCeleb && selectedCeleb.owned ? selectedCeleb.owned.toFixed(2) : '0.00' }})</label>
+                                <input type="text" v-model="sellQuantity" @input="validateInput('sellQuantity')" class="form-control" id="sellQuantity" placeholder="Enter quantity">
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="closeSellModal">Cancel</button>
+                            <button type="button" class="btn btn-primary" @click="confirmSale">Sell</button>
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            <div v-if="showSellModal" class="modal-backdrop fade show">
+            </div>
+            
         </div>
-        
-        <div v-if="showSellModal" class="modal-backdrop fade show">
-        </div>
-        
     </div>
-    
 
 </template>
   
@@ -510,6 +542,18 @@ export default {
             await this.fetchData();
         },
         
+        async updateAllCelebMentions() {
+            await Celebs.updateAllCelebMentions(this.updateCelebMentions);
+        },
+
+        async updateCelebMentions(celebId, mentions) {
+            const db = getFirestore(); // Get the FirebaseFirestore instance
+            const celebRef = doc(db, 'celebs', celebId); // Use it here
+            await updateDoc(celebRef, {
+                mentions: mentions
+            });
+        },
+
         async fetchData() {
             // Ensure user is authenticated before proceeding
             if (!Userauth.isAuthenticated()) {
@@ -546,7 +590,7 @@ export default {
 
             // Fetching user role for admin check
             const userRole = await Userauth.getUserDetailsAndRole();
-            this.isAdmin = userRole === 'admin';
+            this.isAdmin = userRole?.role === 'Admin';
         },
 
         
@@ -823,7 +867,7 @@ export default {
                 } else {
                 await setDoc(portfolioRef, portfolioData);
                 }
-                console.log(`Portfolio updated for userId: ${userId}, celebId: ${celebId}`);
+                // console.log(`Portfolio updated for userId: ${userId}, celebId: ${celebId}`);
             } catch (error) {
                 console.error(`Error updating portfolio for userId: ${userId}, celebId: ${celebId}: `, error);
             }

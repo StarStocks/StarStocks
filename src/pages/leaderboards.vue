@@ -1,26 +1,30 @@
 <!-- leaderboards.vue -->
 <template>
   <br>
-  <div class="col-sm-12">
-    <div class="card">
-      <div class="card-header">
-        <h3>Leaderboard</h3>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="entry in sortedLeaderboard" :key="entry.userId">
-              <td>{{ entry.username }}</td>
-              <td>{{ formatScore(entry.score) }}</td>
-            </tr>
-          </tbody>
-        </table>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-header">
+            <h3>Leaderboard</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="entry in sortedLeaderboard" :key="entry.userId">
+                  <td>{{ entry.username }}</td>
+                  <td>{{ formatScore(entry.score) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>

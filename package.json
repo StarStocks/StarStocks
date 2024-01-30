@@ -1,6 +1,6 @@
 {
-  "name": "cuba-vue3",
-  "version": "0.1.0",
+  "name": "star-stocks",
+  "version": "2.0.26",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -28,6 +28,7 @@
     "@vueuse/core": "^4.0.0-beta.37",
     "apexcharts": "^3.36.3",
     "auth0-js": "^9.20.0",
+    "axios": "^1.6.7",
     "bootstrap": "^5.2.3",
     "core-js": "^3.8.3",
     "dropzone-vue": "^0.1.11",

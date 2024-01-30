@@ -1,11 +1,36 @@
 // Celebs.js
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, query, onSnapshot } from "firebase/firestore";
+import axios from 'axios';
+
 
 class Celeb {
   constructor() {
     this.db = getFirestore();
     this.celebsRef = collection(this.db, 'celebs');
   }
+
+  async getMentionsFromAPI(celebName) {
+    try {
+      const response = await axios.get(`https://StarStocks.pythonanywhere.com/celebscores`, { params: { name: celebName } });
+      console.log(`${celebName} was mentioned ${response.data.mentions} times in the news today.`);
+      return response.data.mentions;
+    } catch (error) {
+      console.error('Error fetching mentions:', error);
+    }
+  }
+  
+  async updateAllCelebMentions(updateCelebMentions) {
+    const celebs = await this.getAllCelebs();
+    for (const celeb of celebs) {
+      try {
+        const mentions = await this.getMentionsFromAPI(celeb.username);
+        await updateCelebMentions(celeb.id, mentions);
+      } catch (error) {
+        console.error(`Error updating mentions for ${celeb.username}:`, error);
+      }
+    }
+  }
+  
 
   async addCeleb({ firstName, lastName, username, imgURL, category, subcategory, team, mentions, issuePrice, currentPrice }) {
     const celebId = doc(this.celebsRef).id; // Generate unique ID
@@ -70,5 +95,6 @@ class Celeb {
   }
 
 }
+
 
 export default new Celeb();

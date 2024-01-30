@@ -1,6 +1,6 @@
 <template>
   <head>
-    <title>StarStocks</title>
+    <title>Star Stocks</title>
   </head>
   <div class="loader-wrapper" v-if="loading">
     <div class="loader-index"><span></span>

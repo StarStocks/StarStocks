@@ -1,8 +1,8 @@
 export const myMixin = {
     data() {
       return {
-        title: 'Mixins are cool',
-        copyright: 'All rights reserved. Product of super awesome people'
+        title: 'Mixins',
+        copyright: 'All rights reserved'
       };
     },
     created: function() {

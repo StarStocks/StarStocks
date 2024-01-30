@@ -1,46 +1,57 @@
 <!-- portfolio.vue -->
 <template>
-  <!-- ... existing template ... -->
-  <div class="table-responsive">
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th>Celebrity</th>
-          <th>Profit/Loss</th>
-          <th>Shares Owned</th>
-          <th>Average Price</th>
-          <th>Current Price</th>
-          <th>Current Value</th>
-          <th>Invested</th>
-          <th>Returned</th>
-          <th>Gains</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in portfolioItems" :key="item.celebId">
-          <td>
-            <div class="d-flex align-items-center">
-              <div class="avatar me-2">
-                <img :src="item.imgURL" @error="setDefaultImage" alt="celeb image" class="img-50 rounded-circle">
+  <br>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-header">
+            <h3>Portfolio</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Celebrity</th>
+            <th>Profit/Loss</th>
+            <th>Shares Owned</th>
+            <th>Average Price</th>
+            <th>Current Price</th>
+            <th>Current Value</th>
+            <th>Invested</th>
+            <th>Returned</th>
+            <th>Gains</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in portfolioItems" :key="item.celebId">
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="avatar me-2">
+                  <img :src="item.imgURL" @error="setDefaultImage" alt="celeb image" class="img-50 rounded-circle">
+                </div>
+                <h6 class="mb-0">{{ item.celebName }}</h6>
               </div>
-              <h6 class="mb-0">{{ item.celebName }}</h6>
-            </div>
-          </td>
-          <td :class="{ profit: item.profitLoss >= 0, loss: item.profitLoss < 0 }">
-            {{ item.profitLoss }}
-            <i v-if="item.profitLoss > 0" class="text-success">▲</i>
-            <i v-if="item.profitLoss < 0" class="text-danger">▼</i>
-          </td>
-          <td>{{ item.owned }}</td>
-          <td>{{ item.averagePrice }}</td>
-          <td>{{ item.currentPrice }}</td>
-          <td>{{ (item.currentPrice * item.owned).toFixed(2) }}</td>
-          <td>{{ item.totalInvested }}</td>
-          <td>{{ item.totalReturned }}</td>
-          <td>{{ item.gains }}</td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+            <td :class="{ profit: item.profitLoss >= 0, loss: item.profitLoss < 0 }">
+              {{ item.profitLoss }}
+              <i v-if="item.profitLoss > 0" class="text-success">▲</i>
+              <i v-if="item.profitLoss < 0" class="text-danger">▼</i>
+            </td>
+            <td>{{ item.owned }}</td>
+            <td>{{ item.averagePrice }}</td>
+            <td>{{ item.currentPrice }}</td>
+            <td>{{ (item.currentPrice * item.owned).toFixed(2) }}</td>
+            <td>{{ item.totalInvested }}</td>
+            <td>{{ item.totalReturned }}</td>
+            <td>{{ item.gains }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
