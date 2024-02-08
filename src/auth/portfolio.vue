@@ -2,10 +2,13 @@
 <template>
 	<br>
     <div class="container-fluid">
+      <button @click="toggleShowOwned" class="btn btn-primary">
+        {{ showOwnedOnly ? 'Show All Stars' : 'Show Owned Stars Only' }}
+      </button>
         <div class="row mt-5">
-            <div class="col-12 col-sm-6 col-md-6 col-lg-2" v-for="item in portfolioItems" :key="item.celebId">
+            <div class="col-12 col-sm-6 col-md-6 col-lg-2" v-for="item in filteredPortfolioItems" :key="item.celebId">
 				<div class="card">
-					<h1 class="card-img-top f-w-900 px-2" style="background-color:#05152a; color:#fff;">{{ item.currentPrice }}</h1>
+					<h1 class="card-img-top f-w-900 px-2" style="background-color:#28292d; color:#fff;">{{ item.currentPrice }}</h1>
 					<div class="image-container">
 						<img :src="item.imgURL" @error="setDefaultImage" alt="celeb image" width="100%">
 						<div class="gradient-overlay"></div>
@@ -54,10 +57,10 @@
 							</div>
 						</div>
 						<div class="mx-0 mt-3 mb-0 text-center">
-							<button type="button" class="btn btn-primary btn-block mb-0 me-3">
+							<button type="button" class="btn btn-primary btn-block mb-1 me-1">
 							<small>BUY</small>
 							</button>
-							<button type="button" class="btn btn-secondary btn-block">
+							<button type="button" class="btn btn-secondary btn-block mb-1 me-1">
 							<small>SELL</small>
 							</button>
 						</div>
@@ -72,7 +75,7 @@
 
   
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue'; // Import computed here
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import Userauth from '@/auth/auth.js';
 import Celebs from '@/data/celebs/celebs.js';
@@ -81,6 +84,7 @@ export default {
   name: 'Portfolio',
   setup() {
     const portfolioItems = ref([]);
+    const showOwnedOnly = ref(false); // State to track if only owned items should be shown
 
     const fetchPortfolio = async () => {
       const db = getFirestore();
@@ -124,31 +128,41 @@ export default {
               };
             } else {
               console.error(`Data missing for celebId: ${celebId}`);
-              return null; // Return null for missing data
+              return null;
             }
           })
         );
 
-        // Filter out any null values from the array
         portfolioItems.value = portfolioItems.value.filter(item => item !== null);
       } else {
         console.log('No portfolio data found for user:', userId);
       }
-
     };
-
-
 
     onMounted(fetchPortfolio);
 
-    return { portfolioItems };
-  },
-      
-  setDefaultImage(event) {
-        event.target.src = '@/assets/images/user.jpg';
+    const filteredPortfolioItems = computed(() => {
+      if (showOwnedOnly.value) {
+        return portfolioItems.value.filter(item => parseFloat(item.owned) > 0);
       }
+      return portfolioItems.value;
+    });
+
+    const toggleShowOwned = () => {
+      showOwnedOnly.value = !showOwnedOnly.value;
+    };
+
+    return { filteredPortfolioItems, toggleShowOwned };
+  },
+
+  methods: {
+    setDefaultImage(event) {
+      event.target.src = '@/assets/images/user.jpg';
+    },
+  },
 };
 </script>
+
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap");

@@ -12,16 +12,16 @@
             <div class="d-flex h-100">
               <img src="@/assets/images/giftools.gif" alt="gif">
               <h6 class="mb-0 f-w-400">
-                <span class="font-primary"></span><span class="f-light">Thank you Testers!</span></h6><i class="icon-arrow-top-right f-light"></i>
+                <span class="font-primary"></span><span class="f-light">Thank you Testers!</span></h6>
             </div>
           </swiper-slide>
-<!--           <swiper-slide class="h-100">
+          <swiper-slide class="h-100">
             <div class="d-flex h-100">
               <img src="@/assets/images/giftools.gif" alt="gif">
               <h6 class="mb-0 f-w-400">
-                <span class="f-light">Who's ya' bae?? </span></h6><a class="ms-1" href="/pages/support" target="_blank">Add a new celeb now !</a>
+                <span class="f-light">New Stars </span></h6><a class="ms-1" href="@/app/market" target="_blank">coming soon!</a><i class="icon-arrow-top-right f-light"></i>
             </div>
-          </swiper-slide> -->
+          </swiper-slide>
         </swiper>
     </div>
     <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
@@ -39,10 +39,12 @@
           </svg>
           <Bookmark v-bind:activeclass="bookmark" />
         </li> -->
+        <li><Stats /></li>
         <li>
           <Mode />
         </li>
 <!--         <Notifications /> -->
+
         <Profile />
       </ul>
     </div>
@@ -57,11 +59,12 @@
   import Notifications from './notifications.vue';
   import Mode from './mode';
   import Profile from './profile';
+  import Stats from './stats'
   import Logo from './logo.vue';
   import SearchBar from './search';
   export default {
     components: {
-      Bookmark,Notifications,Mode,Profile,Logo,Swiper,SwiperSlide,SearchBar,
+      Bookmark,Notifications,Mode,Profile,Stats,Logo,Swiper,SwiperSlide,SearchBar,
     },
     data() {
       return {

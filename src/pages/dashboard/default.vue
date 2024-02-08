@@ -1,15 +1,29 @@
 <template>
-    <div>
-        <Breadcrumbs title="Dashboard" />
-
-        <div class="container-fluid">
-            <div class="row widget-grid">
-                <WelcomeCard />
-                <PurchaseSaleCard />
+    <div class="view">
+        <div>
+            <div class="container-fluid">
+                <div class="page-title">
+                    <div class="row">
+                        <div class="col-6 d-flex">
+                            <h3>Dashboard</h3>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <div class="container-fluid">
+                <div class="row widget-grid">
+                    <WelcomeCard />
+                    <PurchaseSaleCard />
+                </div>
+            </div>
+
+
         </div>
     </div>
 </template>
+
+
 
 <script>
 import WelcomeCard from "./default/WelcomeCard.vue";

@@ -74,12 +74,11 @@ export default {
           if (Object.keys(celebHoldings).length > 0) {
             for (const celebId in celebHoldings) {
               const holdings = celebHoldings[celebId];
-              if (holdings && holdings.quantity) {
+              if (holdings && holdings.owned > 0) { // Using holdings.owned instead of holdings.quantity
                 const currentMarketValue = await getCurrentMarketValue(celebId); 
-                const quantity = parseFloat(holdings.quantity) || 0;
-                const totalInvested = parseFloat(holdings.totalInvested) || 0;
-                const currentValue = quantity * currentMarketValue;
-                totalGains += currentValue - totalInvested;
+                const owned = parseFloat(holdings.owned) || 0;
+                const currentValue = owned * currentMarketValue;
+                totalGains += currentValue; // If you're only interested in the current value of the owned shares
               }
             }
           }
